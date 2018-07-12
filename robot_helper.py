@@ -21,16 +21,16 @@ class RobotHelper():
 	def distance(self):
 		a = self.x
 		b = self.y
+		print a
+		print b
 		distance_moved = math.sqrt(a*a+b*b)
 		print int(distance_moved)
-		
-		
-robot1 = RobotHelper()
-robot1.forward(5)
-robot1.backward(3)
-robot1.left(3)
-robot1.right(2)
-robot1.distance()
+		self.x = 0.00
+		self.y = 0.00
+	
+	def position(self):
+		print self.x
+		print self.y 
 	
 	
 		
