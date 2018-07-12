@@ -3,6 +3,7 @@ import math
 class RobotHelper():
 	
 	def __init__(self, x=0.00, y=0.00):
+		#initialize robot position with x,y co-ordinates with (0,0)
 		self.x = x
 		self.y = y
 	
@@ -21,16 +22,13 @@ class RobotHelper():
 	def distance(self):
 		a = self.x
 		b = self.y
-		print a
-		print b
 		distance_moved = math.sqrt(a*a+b*b)
-		print int(distance_moved)
+		print('Distance moved by robot:{:d}'.format(int(distance_moved)))
+		#Re-position robot location to (0,0)
 		self.x = 0.00
 		self.y = 0.00
+
 	
-	def position(self):
-		print self.x
-		print self.y 
 	
 	
 		
