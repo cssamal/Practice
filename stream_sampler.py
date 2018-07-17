@@ -16,8 +16,7 @@ class StreamSampler:
     def operate_stream(self, stream):
         """Operate on stream to get a sample output"""
         self.stream = stream
-        for i in range(0, self.size):
-            self.sample.append(self.stream[i])
+        self.sample = self.stream[0:self.size]
 
         for i in range(self.size+1, self.size_input):
             random_index = randint(0, i)
@@ -36,8 +35,19 @@ def input_parser():
                         type=int)
     group.add_argument('-i', '--interactive',
                        default=False,
+                       action='store_true',
                        help='For use with pipes')
     return parser
+
+
+def read_in_chunks(file_object, chunk_size=1024):
+    """Lazy function (generator) to read a file piece by piece.
+    Default chunk size: 1k."""
+    while True:
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        yield data
 
 
 def main():
@@ -45,14 +55,19 @@ def main():
     args = parser.parse_args()
     stream_sampler = StreamSampler(size=args.size)
 
-    if args.size:
-        with open("/dev/random", 'rb') as random_string:
-            output = stream_sampler.operate_stream(random_string.readline())
-            print("The sample output is:" + str(output))
     if args.interactive:
-        output = stream_sampler.operate_stream(args.interactive)
-        print("The sample output is:" + str(output))
+        f = open('/dev/stdin', 'rb')
+        sample = ''
+        try:
+            for line in read_in_chunks(f):
+                output = stream_sampler.operate_stream(line)
+                sample = str(output)
+        except KeyboardInterrupt as ki:
+            print("Keyboard Interrupt detected")
+        finally:
+            print("The sample output is:" + sample)
 
 
 if __name__ == "__main__":
     sys.exit(main())
+
