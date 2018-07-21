@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from random import randint
 from argparse import ArgumentParser
-import sys
 
 
 class StreamSampler:
@@ -9,7 +8,6 @@ class StreamSampler:
 
     def __init__(self, size):
         self.size = size
-        self.sample = []
         self.stream = None
         self.size_input = len(str(self.stream))
 
@@ -23,6 +21,16 @@ class StreamSampler:
             if random_index < self.size:
                 self.sample[random_index] = self.stream[i]
         return self.sample
+
+    @staticmethod
+    def read_in_chunks(file_object, chunk_size=1024):
+        """Lazy function (generator) to read a file piece by piece.
+        Default chunk size: 1k."""
+        while True:
+            data = file_object.read(chunk_size)
+            if not data:
+                break
+            yield data
 
 
 def input_parser():
@@ -40,34 +48,24 @@ def input_parser():
     return parser
 
 
-def read_in_chunks(file_object, chunk_size=1024):
-    """Lazy function (generator) to read a file piece by piece.
-    Default chunk size: 1k."""
-    while True:
-        data = file_object.read(chunk_size)
-        if not data:
-            break
-        yield data
-
-
 def main():
     parser = input_parser()
     args = parser.parse_args()
     stream_sampler = StreamSampler(size=args.size)
 
     if args.interactive:
-        f = open('/dev/stdin', 'rb')
-        sample = ''
+        file_object = open('/dev/stdin', 'rb')
+        stream_list = []
         try:
-            for line in read_in_chunks(f):
-                output = stream_sampler.operate_stream(line)
-                sample = str(output)
-        except KeyboardInterrupt as ki:
+            for line in stream_sampler.read_in_chunks(file_object):
+                stream_list.extend(line)
+        except KeyboardInterrupt:
             print("Keyboard Interrupt detected")
         finally:
-            print("The sample output is:" + sample)
+            output = stream_sampler.operate_stream(stream_list)
+            print("The sample output is:" + str(output))
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
 
