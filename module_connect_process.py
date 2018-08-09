@@ -17,7 +17,7 @@ class ModuleConnectProcess:
 
     def delay(self, input_string):
         word_list = input_string.split(" ")
-        if word_list[1]:
+        if len(word_list) >= 1:
             return word_list[0]
         else:
             return None
@@ -42,6 +42,7 @@ class ModuleConnectProcess:
               "\n process <input string>")
         module_list = []
         module_dict = {}
+        no_of_connect = 0
         while True:
             options = input("Provide command inputs:")
             options_list = options.split(" ")
@@ -56,17 +57,26 @@ class ModuleConnectProcess:
                 if not module_dict:
                     print("Please provide module before connect")
                 else:
+                    no_of_connect += 1
                     for i in range(1, len(options_list)):
                         if options_list[i] in module_dict:
                             module_list.append(options_list[i])
                         else:
                             print('It seems, module name not declared')
             elif options_list[0] == 'process':
-                input_string = " ".join(word for word in options_list[1:])
-                module_connect_process.process(input_string, module_list, module_dict)
-                break
+                if not module_dict:
+                    print("No module present to process the input.")
+                    break
+                elif no_of_connect == 0 or no_of_connect > 1:
+                    print("I am confused as None or more than one connect defined.")
+                    break
+                else:
+                    input_string = " ".join(word for word in options_list[1:])
+                    module_connect_process.process(input_string, module_list, module_dict)
+                    break
 
 
 if __name__ == '__main__':
     module_connect_process = ModuleConnectProcess()
     module_connect_process.main()
+
